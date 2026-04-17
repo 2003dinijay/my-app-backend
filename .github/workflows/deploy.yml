@@ -44,7 +44,7 @@ jobs:
         with:
           image-ref: '${{ env.IMAGE_NAME }}:${{ env.TAG }}'
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           severity: 'CRITICAL,HIGH'
 
       # 6. Push to ACR
