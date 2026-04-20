@@ -16,23 +16,13 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Change paths to include /api to match Frontend
 app.get('/api/todos', async (req, res) => {
-  try {
-    const todos = await Todo.find();
-    res.json(todos);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const todos = await Todo.find();
+  res.json(todos);
 });
-
 app.post('/api/todos', async (req, res) => {
-  try {
-    // Change req.body.text to req.body.task to match Frontend
-    const newTodo = new Todo({ task: req.body.task }); 
-    await newTodo.save();
-    res.json(newTodo);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  const newTodo = new Todo({ task: req.body.task }); // Use 'task' to match frontend
+  await newTodo.save();
+  res.json(newTodo);
 });
 
 app.delete('/api/todos/:id', async (req, res) => {
