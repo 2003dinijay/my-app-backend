@@ -14,13 +14,13 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('🚀 Todo App Backend connected to Atlas'))
   .catch(err => console.error('❌ Connection error:', err));
 
-// Change paths to include /api to match Frontend
+
 app.get('/api/todos', async (req, res) => {
   const todos = await Todo.find();
   res.json(todos);
 });
 app.post('/api/todos', async (req, res) => {
-  const newTodo = new Todo({ task: req.body.task }); // Use 'task' to match frontend
+  const newTodo = new Todo({ task: req.body.task }); 
   await newTodo.save();
   res.json(newTodo);
 });
