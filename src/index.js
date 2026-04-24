@@ -24,18 +24,19 @@ app.get('/api/todos', async (req, res) => {
   res.json(todos);
 });
 
-// POST new todo
+// POST new todo (with optional dueDate + dueTime)
 app.post('/api/todos', async (req, res) => {
-  const newTodo = new Todo({ task: req.body.task });
+  const { task, dueDate, dueTime } = req.body;
+  const newTodo = new Todo({ task, dueDate: dueDate || null, dueTime: dueTime || null });
   await newTodo.save();
   res.json(newTodo);
 });
 
-// PATCH toggle completed
+// PATCH — toggle completed or update fields
 app.patch('/api/todos/:id', async (req, res) => {
   const todo = await Todo.findByIdAndUpdate(
     req.params.id,
-    { completed: req.body.completed },
+    req.body,
     { new: true }
   );
   res.json(todo);
