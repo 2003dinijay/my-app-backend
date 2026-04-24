@@ -1,14 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Todo = require('./models/Todo'); // Import the model
+const Todo = require('./models/Todo');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 app.use(cors({
-  origin: '*', 
-  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
 app.use(express.json());
@@ -17,17 +18,30 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('🚀 Todo App Backend connected to Atlas'))
   .catch(err => console.error('❌ Connection error:', err));
 
-
+// GET all todos (newest first)
 app.get('/api/todos', async (req, res) => {
-  const todos = await Todo.find();
+  const todos = await Todo.find().sort({ createdAt: -1 });
   res.json(todos);
 });
+
+// POST new todo
 app.post('/api/todos', async (req, res) => {
-  const newTodo = new Todo({ task: req.body.task }); 
+  const newTodo = new Todo({ task: req.body.task });
   await newTodo.save();
   res.json(newTodo);
 });
 
+// PATCH toggle completed
+app.patch('/api/todos/:id', async (req, res) => {
+  const todo = await Todo.findByIdAndUpdate(
+    req.params.id,
+    { completed: req.body.completed },
+    { new: true }
+  );
+  res.json(todo);
+});
+
+// DELETE a todo
 app.delete('/api/todos/:id', async (req, res) => {
   await Todo.findByIdAndDelete(req.params.id);
   res.json({ message: "Todo deleted" });
