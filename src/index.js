@@ -15,16 +15,16 @@ app.use(cors({
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('🚀 Todo App Backend connected to Atlas'))
+  .then(() => console.log('🚀 Connected to MongoDB Atlas'))
   .catch(err => console.error('❌ Connection error:', err));
 
-// GET all todos (newest first)
+// GET all todos — newest first
 app.get('/api/todos', async (req, res) => {
   const todos = await Todo.find().sort({ createdAt: -1 });
   res.json(todos);
 });
 
-// POST new todo (with optional dueDate + dueTime)
+// POST new todo
 app.post('/api/todos', async (req, res) => {
   const { task, dueDate, dueTime } = req.body;
   const newTodo = new Todo({ task, dueDate: dueDate || null, dueTime: dueTime || null });
@@ -32,22 +32,16 @@ app.post('/api/todos', async (req, res) => {
   res.json(newTodo);
 });
 
-// PATCH — toggle completed or update fields
+// PATCH — toggle completed or update any field
 app.patch('/api/todos/:id', async (req, res) => {
-  const todo = await Todo.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
+  const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(todo);
 });
 
-// DELETE a todo
+// DELETE
 app.delete('/api/todos/:id', async (req, res) => {
   await Todo.findByIdAndDelete(req.params.id);
-  res.json({ message: "Todo deleted" });
+  res.json({ message: 'Deleted' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend listening on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Backend listening on port ${PORT}`));
